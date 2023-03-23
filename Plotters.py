@@ -9,10 +9,11 @@ import numpy as np
 
 def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not plotting infected substates
     N,comp = V.N,V.comp
+    tarr = tarr/60
+    plt.plot(tarr,yarr[-1],label = "n",color = "gray")
+    plt.plot(tarr,yarr[-2],label = "P",color = "black")
     plt.plot(tarr,yarr[0], label = "B",color = "blue")
     plt.plot(tarr,sum(yarr[1:N+1]),label = "L",color = "darkviolet")
-    plt.plot(tarr,yarr[-2],label = "P",color = "black")
-    plt.plot(tarr,yarr[-1],label = "n",color = "gray")
     if model == "M1":
         LI = sum(yarr[N+1:2*N+1])
         plt.plot(tarr,LI,label = r"L$_I$",color = "crimson")
@@ -24,7 +25,7 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not p
     if scale == "log":
         plt.ylim(lb,np.max(yarr)*1.5)
     plt.ylabel(r"Concentration [ml$^{-1}$]")
-    plt.xlabel("Time [min]")
+    plt.xlabel("Time [h]")
     plt.grid(axis="y", which = "major")
     plt.legend()
     if figtitle:
@@ -189,7 +190,7 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
             if V.comp:
                 lineList[5].set_ydata(arrlist[j][-3,r0:rf])
                 lineList[6].set_ydata(sum(arrlist[j][21:31])[r0:rf])
-        ax.set_title(f"t = {(j+1)*T/(frames-1):.2} min")
+        ax.set_title(f"t = {np.round((j+1)*T/(frames-1))} min")
         # return the artists set
         return lineList
     # kick off the animation

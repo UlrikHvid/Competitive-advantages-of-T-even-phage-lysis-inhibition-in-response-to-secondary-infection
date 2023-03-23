@@ -13,7 +13,7 @@ def IV(model,N=10,M=10,comp = 0):#Initial values
         length = M*N+3
     length += 11 if comp else 0
     y0 = np.zeros(length)
-    y0[0],y0[-2],y0[-1] = 10**6,10**4,10**9
+    y0[0],y0[-2],y0[-1] = 10**6,10**3,10**9
     y0[-3] = y0[-2] if comp else 0
     return y0
 
@@ -21,7 +21,7 @@ class DV():
     def __init__(self):
         self.N = 10
         self.M = 10
-        self.gnmax = np.log(2**(1/23))
+        self.gnmax = np.log(2**(1/20))
         self.n0 = 10**9
         self.Kn= self.n0/5
         self.eta = 5*10**(-10)
