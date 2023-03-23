@@ -7,53 +7,19 @@ import numpy as np
 
 #Plotter functions
 
-def M0Plotter(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
-    for i,var in enumerate(yarr):
-        ls = "-"
-        alpha = 1
-        label = None
-        if i == 0: #Susceptible
-            label = "B"
-            color = "orange"
-        elif i == N + 1: #Phages
-            label = "P"
-            color = "black"
-        elif i == N + 2: #Nutrition
-            label = "n"
-            color = "gray"
-        if i > 0 and i <= N: #Infected
-            color = "red"
-            if i == 1:
-                label = "L1"
-            elif i == N:
-                label = f"L{N}"
-                ls = "--"
-            else:
-                alpha = 0.1
-        plt.plot(tarr,var, label = label,ls = ls,alpha = alpha,color = color)
-    if scale == "log":
-        plt.ylim(lb,np.max(yarr)*1.5)
-    plt.yscale(scale)
-    plt.ylabel(r"Concentration [ml$^{-1}$]")
-    plt.xlabel("Time [min]")
-    plt.legend()
-    if figtitle:
-        plt.savefig(figtitle)
-    return
-
 def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not plotting infected substates
     N,comp = V.N,V.comp
     plt.plot(tarr,yarr[0], label = "B",color = "blue")
+    plt.plot(tarr,sum(yarr[1:N+1]),label = "L",color = "darkviolet")
     plt.plot(tarr,yarr[-2],label = "P",color = "black")
     plt.plot(tarr,yarr[-1],label = "n",color = "gray")
-    plt.plot(tarr,sum(yarr[1:N+1]),label = "L",color = "red")
     if model == "M1":
         LI = sum(yarr[N+1:2*N+1])
-        plt.plot(tarr,LI,label = r"L$_I$",color = "darkorange")
+        plt.plot(tarr,LI,label = r"L$_I$",color = "crimson")
     if comp:
         Lr = sum(yarr[2*N+1:3*N+1])
         plt.plot(tarr,yarr[-3],label = r"P$_r$",ls = "--",color = "black")
-        plt.plot(tarr,Lr,label = r"L$_r$",ls = "--",color = "red")
+        plt.plot(tarr,Lr,label = r"L$_r$",ls = "--",color = "darkviolet")
     plt.yscale(scale)
     if scale == "log":
         plt.ylim(lb,np.max(yarr)*1.5)
@@ -65,7 +31,7 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not p
         plt.savefig(figtitle)
     return
 
-def M1Plotter_AllStates(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
+def BrothPlotter_AllStates(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
     for i,var in enumerate(yarr):
         ls = "-"
         alpha = 1
@@ -108,122 +74,8 @@ def M1Plotter_AllStates(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
         plt.savefig(figtitle)
     return
 
-def CompPlotter(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
-    for i,var in enumerate(yarr):
-        ls = "-"
-        alpha = 1
-        label = None
-        if i == 0: #Susceptible
-            label = "B"
-            color = "orange"
-        elif i == 3*N + 2: #Phages
-            label = "P"
-            color = "black"
-        elif i == 3*N + 1: #Phages of second type
-            label = "P2"
-            ls = "--"
-            color = "black"
-        elif i == 3*N + 3: #Nutrition
-            label = "n"
-            color = "gray"
-        if i > 0 and i <=N: #Noninhibited infected
-            #ls = "dashed"
-            color = "red"
-            if i == 1:
-                label = "L1"
-            elif i == N:
-                label = f"L{N}"
-                ls = "--"
-            else:
-                alpha = 0.1
-        elif i > N and i < 2*N+1: #Inhibited infected
-            color = "blue"
-            if i == N+1:
-                label = "LI1"
-            elif i == 2*N:
-                label = f"LI{N}"
-                ls = "--"
-            else:
-                alpha = 0.1
-        elif i > 2*N and i < 3*N+1: #Infected of second type
-            color = "green"
-            if i == 2*N+1:
-                label = "L2_1"
-            elif i == 3*N:
-                label = f"L2_{N}"
-                ls = "--"
-            else:
-                alpha = 0.1
-        plt.plot(tarr,var,label = label,ls = ls,alpha = alpha,color = color)
-    plt.yscale(scale)
-    if scale == "log":
-        plt.ylim(lb,np.max(yarr)*1.5)
-    plt.ylabel(r"Concentration [ml$^{-1}$]")
-    plt.xlabel("Time [min]")
-    plt.legend()
-    if figtitle:
-        plt.savefig(figtitle)
-    return
 
-def CompPlotter2(tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not plotting infected substates
-    L  = sum(yarr[1:11])
-    LI = sum(yarr[11:21])
-    Lr = sum(yarr[21:31])
-    plt.plot(tarr,yarr[0], label = "B",color = "orange")
-    plt.plot(tarr,yarr[-2],label = "P",color = "black")
-    plt.plot(tarr,yarr[-3],label = r"P$_r$",ls = "--",color = "black")
-    plt.plot(tarr,yarr[-1],label = "n",color = "gray")
-    plt.plot(tarr,L,label = "L",color = "red")
-    plt.plot(tarr,LI,label = r"L$_I$",color = "blue")
-    plt.plot(tarr,Lr,label = r"L$_r$",color = "green")
-    plt.yscale(scale)
-    if scale == "log":
-        plt.ylim(lb,np.max(yarr)*1.5)
-    plt.ylabel(r"Concentration [ml$^{-1}$]")
-    plt.xlabel("Time [min]")
-    plt.legend()
-    if figtitle:
-        plt.savefig(figtitle)
-    return
-
-def M3Plotter(sol,N,M,scale = "log",lb = 1000, figtitle = 0):
-    count1,count2 = 1,1
-    cmap = mpl.colormaps['winter']
-    for i,var in enumerate(sol.y):
-        ls = "-"
-        label = None
-        if i == 0: #Susceptible
-            label = "B"
-            color = "orange"
-        elif i == N*M + 1: #Phages
-            label = "P"
-            color = "black"
-        elif i == N*M + 2: #Nutrition
-            label = "n"
-            color = "gray"
-        elif (i-1)%N == 0: #Just after infection
-            label = f"L$_{{{count1},1}}$"
-            color = cmap(count1/M)
-            count1 += 1
-        elif i%N == 0: #Just before lysis
-            ls = "--"
-            label = f"L$_{{{count2},{N}}}$"
-            color = cmap(count2/M)
-            count2 += 1
-        else:
-            continue
-        plt.plot(sol.t,var,label = label,ls = ls,color = color)
-    if scale == "log":
-        plt.ylim(lb,np.max(sol.y)*1.5)
-    plt.yscale(scale)
-    plt.ylabel("Count")
-    plt.xlabel("Time [min]")
-    plt.legend()
-    if figtitle:
-        plt.savefig(figtitle)
-    return
-
-def M3Plotter_Simple(sol,N,M,scale = "log", lb = 1000,figtitle = 0):
+def M3Plotter(sol,N,M,scale = "log", lb = 1000,figtitle = 0):
     plt.plot(sol.t,sol.y[0],label = "B",color = "orange")
     plt.plot(sol.t,sol.y[-2],label = "P",color = "black")
     plt.plot(sol.t,sol.y[-1],label = "n",color = "gray")
@@ -239,7 +91,7 @@ def M3Plotter_Simple(sol,N,M,scale = "log", lb = 1000,figtitle = 0):
         plt.savefig(figtitle)
     return
 
-def M3Plotter_Interm(sol,N,M,scale = "log",lb = 1000, figtitle = 0):
+def M3Plotter_Detailed(sol,N,M,scale = "log",lb = 1000, figtitle = 0):
     count = 1
     cmap = mpl.colormaps['winter']
     for i,var in enumerate(sol.y):
@@ -258,55 +110,6 @@ def M3Plotter_Interm(sol,N,M,scale = "log",lb = 1000, figtitle = 0):
             label = f"L$_{{{count},{N}}}$"
             color = cmap(count/M)
             count += 1
-        else:
-            continue
-        plt.plot(sol.t,var,label = label,ls = ls,color = color)
-    if scale == "log":
-        plt.ylim(lb,np.max(sol.y)*1.5)
-    plt.yscale(scale)
-    plt.ylabel("Count")
-    plt.xlabel("Time [min]")
-    plt.legend()
-    if figtitle:
-        plt.savefig(figtitle)
-    return
-    
-def M3CPlotter(sol,N,M,scale = "log",lb = 1000,figtitle = 0):
-    count1,count2 = 1,1
-    cmap = mpl.colormaps['winter']
-    for i,var in enumerate(sol.y):
-        ls = "-"
-        label = None
-        if i == 0: 
-            label = "B"
-            color = "orange"
-        elif i == N*(M+1) + 1: 
-            label = "P"
-            color = "black"
-        elif i == N*(M+1) + 2:
-            label = "P2"
-            color = "black"
-            ls = "--"
-        elif i == N*M + 3: #Nutrition
-            label = "n"
-            color = "gray"
-        elif (i-1)%N == 0 and i/M <= N: #P1-infected just after infection
-            label = f"L$_{{{count1},1}}$"
-            color = cmap(count1/M)
-            count1 += 1
-        elif i%N == 0 and i/M <= N: #Just before lysis
-            ls = "--"
-            label = f"L$_{{{count2},{N}}}$"
-            color = cmap(count2/M)
-            count2 += 1
-        elif i == N*M+1: #First P2-infected
-            ls = "-"
-            label = f"LL$_{{1}}$"
-            color = "blue"
-        elif i == N*(M+1):
-            ls = "--"
-            label = f"LL$_{{N}}$"
-            color = "blue"
         else:
             continue
         plt.plot(sol.t,var,label = label,ls = ls,color = color)
@@ -354,15 +157,15 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
     else:
         LIN = False
     rarr = np.linspace(r0,rf,rf-r0)*V.dr/1000 #mm
-    lineB,  = ax.plot(rarr,arrlist[0][0,r0:rf],label = "B")
-    lineP,  = ax.plot(rarr,arrlist[0][-2,r0:rf],label = "P")
-    linen,  = ax.plot(rarr,arrlist[0][-1,r0:rf],label = "n")
-    lineL,  = ax.plot(rarr,sum(arrlist[0][ 1:11])[r0:rf],label = "L")
+    lineB,  = ax.plot(rarr,arrlist[0][0,r0:rf],label = "B",color = "blue")
+    lineP,  = ax.plot(rarr,arrlist[0][-2,r0:rf],label = "P",color = "black")
+    linen,  = ax.plot(rarr,arrlist[0][-1,r0:rf],label = "n",color = "gray")
+    lineL,  = ax.plot(rarr,sum(arrlist[0][ 1:11])[r0:rf],label = "L",color = "darkviolet")
     if LIN:
-        lineLI, = ax.plot(rarr,sum(arrlist[0][11:21])[r0:rf],label = "LI")
+        lineLI, = ax.plot(rarr,sum(arrlist[0][11:21])[r0:rf],label = "LI",ls = "--",color = "darkviolet")
     if V.comp:
-        linePr, = ax.plot(rarr,arrlist[0][-3,r0:rf],label = "Pr")
-        lineLr, = ax.plot(rarr,sum(arrlist[0][21:31])[r0:rf],label = "Lr")
+        linePr, = ax.plot(rarr,arrlist[0][-3,r0:rf],label = "Pr",ls = "--", color = "black")
+        lineLr, = ax.plot(rarr,sum(arrlist[0][21:31])[r0:rf],label = "Lr",ls = "--",color = "darkviolet")
     lineList = [lineB,lineP,linen,lineL]
     if LIN:
         lineList.append(lineLI)

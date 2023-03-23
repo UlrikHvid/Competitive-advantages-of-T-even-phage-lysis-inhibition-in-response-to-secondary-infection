@@ -32,7 +32,7 @@ class DV():
         self.rl = 0.5
         self.rb = 0.1
         self.Y = 1
-        self.rr = 0.01
+        self.rr = 0
         self.comp = 0
 
 def Const(ob,M): #Gather constants in an array of a length appropriate for the model
