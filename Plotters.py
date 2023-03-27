@@ -190,7 +190,7 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
             if V.comp:
                 lineList[5].set_ydata(arrlist[j][-3,r0:rf])
                 lineList[6].set_ydata(sum(arrlist[j][21:31])[r0:rf])
-        ax.set_title(f"t = {np.round((j+1)*T/(frames-1))} min")
+        ax.set_title(f"t = {np.round((j)*T/(frames-1))} min")
         # return the artists set
         return lineList
     # kick off the animation
