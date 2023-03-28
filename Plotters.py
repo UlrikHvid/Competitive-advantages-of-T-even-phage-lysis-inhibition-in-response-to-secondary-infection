@@ -163,7 +163,7 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
     linen,  = ax.plot(rarr,arrlist[0][-1,r0:rf],label = "n",color = "gray")
     lineL,  = ax.plot(rarr,sum(arrlist[0][ 1:11])[r0:rf],label = "L",color = "darkviolet")
     if LIN:
-        lineLI, = ax.plot(rarr,sum(arrlist[0][11:21])[r0:rf],label = "LI",ls = "--",color = "darkviolet")
+        lineLI, = ax.plot(rarr,sum(arrlist[0][11:21])[r0:rf],label = "LI",color = "crimson")
     if V.comp:
         linePr, = ax.plot(rarr,arrlist[0][-3,r0:rf],label = "Pr",ls = "--", color = "black")
         lineLr, = ax.plot(rarr,sum(arrlist[0][21:31])[r0:rf],label = "Lr",ls = "--",color = "darkviolet")

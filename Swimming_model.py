@@ -46,7 +46,7 @@ def MSShell(model,y0,V,t,frames=False):
     sim          = np.zeros((frames,len(y0),V.l))
     frameind     = np.linspace(0,its-1,frames,dtype = int)
     DMn,DMP,DMB  = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l)/V.dr**2,V.DB*Matrix(V.l)/V.dr**2
-    rarr         = np.linspace(0,V.dr*V.l,V.l)
+    rarr         = np.linspace(0,V.Rmax,V.l)
     areaarr      = Area(V.dr,np.arange(1,V.l+1))
     cellgrid     = np.meshgrid(rarr,indexing = "ij",sparse = True)
     n_matrix     = MatrixAd(V.l)

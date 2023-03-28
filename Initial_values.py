@@ -78,7 +78,7 @@ def IVS(model,V): #Initial values for spatial models
     return y0
 
 class DVS(): #Default values for spatial models
-    def __init__(self,rho = 10**9,dr = 20,Rmax = 10**4,da = 500,Dn = 50000):
+    def __init__(self,rho = 10**9,dr = 20,Rmax = 10**4,da = 500,Dn = 5*10**4):
         self.N      = 10
         self.M      = 10
         self.da     = da #Microns
@@ -94,8 +94,8 @@ class DVS(): #Default values for spatial models
         self.rb     = 0.1
         self.Y      = 1
         self.comp   = 0
-        self.DP     = 600 #Micron**2/min
-        self.DB     = 833 #Micron**2/min
+        self.DP     = 700 #Micron**2/min
+        self.DB     = 800 #Micron**2/min
         self.Dn     = Dn #Micron**2/min
         self.Rmax   = Rmax #Microns
         self.rspot  = 3*10**3 #Microns
@@ -103,7 +103,7 @@ class DVS(): #Default values for spatial models
         self.dt     = dr**2/Dn/3 #Ensures stability of diffusion algorithm
         self.l      = int(self.Rmax/self.dr)
         self.delta  = 0.003/60
-        self.chi    = 10**5/6
+        self.chi    = 10**4
         self.am     = self.n0/100
         self.ap     = self.n0*5
         self.extinct= 0
