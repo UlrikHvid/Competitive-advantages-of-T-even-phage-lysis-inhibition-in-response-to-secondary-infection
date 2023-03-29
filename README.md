@@ -1,4 +1,4 @@
-![logo](T4-logo.png| width=50)
+![logo](T4-logo.png = 250x250)
 
 ## :rocket: About
 
