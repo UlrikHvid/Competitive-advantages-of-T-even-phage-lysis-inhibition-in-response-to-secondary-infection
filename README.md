@@ -1,5 +1,4 @@
-##![logo](T4-logo.png = 250x250)
-<img src=T4-logo.png width="48">
+<img src=T4-logo.png width="80">
 
 ## :rocket: About
 
