@@ -45,6 +45,7 @@ def MSShell(model,y0,V,t,frames=False):
     its          = int(t/V.dt)
     sim          = np.zeros((frames,len(y0),V.l))
     frameind     = np.linspace(0,its-1,frames,dtype = int)
+    gn0          = Gamma(V.gnmax,V.n0,V.Kn)
     DMn,DMP,DMB  = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l)/V.dr**2,V.DB*Matrix(V.l)/V.dr**2
     rarr         = np.linspace(0,V.Rmax,V.l)
     areaarr      = Area(V.dr,np.arange(1,V.l+1))
@@ -56,19 +57,19 @@ def MSShell(model,y0,V,t,frames=False):
         for i in tqdm(range(its)):
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
-            ynext = MS0(ynext,V.N,V.gnmax,V.n0,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid)
+            ynext = MS0(ynext,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid)
     else:
         for i in tqdm(range(its)):
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
-            ynext = MS1(ynext,V.N,V.gnmax,V.n0,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid,V.comp)
+            ynext = MS1(ynext,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid)
     return sim
 
-def MS0(y,N,gnmax,n0,Kn,eta,tau0,beta0,rl,rb,Y,delta,chi,am,ap,dt,dr,l,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
+def MS0(y,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
     #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
+    N,gnmax,Kn,eta,tau0,beta0,rl,rb,Y,delta,chi,am,ap,dt,dr,l = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l
     B,P,n        = y[0],y[-2],y[-1]
     gn           = Gamma(gnmax,n,Kn)
-    gn0          = Gamma(gnmax,n0,Kn)
     tau          = Tau(tau0   ,rl,gn0,gn)/N
     beta         = Beta(beta0 ,rb,gn0,gn)
     dydt         = np.zeros_like(y)
@@ -88,11 +89,11 @@ def MS0(y,N,gnmax,n0,Kn,eta,tau0,beta0,rl,rb,Y,delta,chi,am,ap,dt,dr,l,DMB,DMP,D
         nex[i] = Advect(nex[i],y[i],vbord,dA,areaarr)
     return nex
 
-def MS1(y,N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,delta,chi,am,ap,dt,dr,l,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid,comp = 0):
+def MS1(y,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
     #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
+    N,gnmax,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,delta,chi,am,ap,dt,dr,l,comp = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l,V.comp
     B,P,n          = y[0],y[-2],y[-1]
     gn             = Gamma(gnmax,n,Kn)
-    gn0            = Gamma(gnmax,n0,Kn)
     tau            = Tau(tau0   ,rl,gn0,gn)/N
     tau_I          = f_tau*tau
     beta           = Beta(beta0 ,rb,gn0,gn)

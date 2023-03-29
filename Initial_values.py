@@ -94,7 +94,7 @@ class DVS(): #Default values for spatial models
         self.rb     = 0.1
         self.Y      = 1
         self.comp   = 0
-        self.DP     = 700 #Micron**2/min
+        self.DP     = 240 #Micron**2/min
         self.DB     = 800 #Micron**2/min
         self.Dn     = Dn #Micron**2/min
         self.Rmax   = Rmax #Microns

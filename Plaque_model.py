@@ -37,42 +37,42 @@ def MPShell(model,y0,V,t,frames=False):
     sim = np.zeros((frames,len(y0),V.l)) #Holds the saved data
     frameind = np.linspace(0,its-1,frames,dtype = int)
     ynext = np.copy(y0)
+    DMn,DMP = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l)/V.dr**2
+    gn0          = Gamma(V.gnmax,V.n0,V.Kn)
     if model == "MP0":
         for i in tqdm(range(its)):
-            ynext = MP0(ynext,V)
+            ynext = MP0(ynext,V,gn0,DMP,DMn)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
     elif model == "MP1":
         for i in tqdm(range(its)):
-            ynext = MP1(ynext,V)
+            ynext = MP1(ynext,V,gn0,DMP,DMn)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
     return sim
 
-def MP0(y,V):
+def MP0(y,V,gn0,DMP,DMn):
     #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
-    N,gnmax,n0,Kn,eta,tau0,beta0,rl,rb,Y,DP,Dn,da,delta,dt,dr,l = V.N,V.gnmax,V.n0,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.DP,V.Dn,V.da,V.delta,V.dt,V.dr,V.l
+    N,gnmax,Kn,eta,tau0,beta0,rl,rb,Y,da,delta,dt = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.da,V.delta,V.dt
     gn           = Gamma(gnmax,y[-1],Kn)
-    gn0          = Gamma(gnmax,n0,Kn)
     tau          = Tau(tau0   ,rl,gn0,gn)/N
     beta         = Beta(beta0 ,rb,gn0,gn)
     B,P,n        = y[0],y[-2],y[-1]
     eta          = eta/da
-    nex          = np.copy(y)
-    nex[0]      += dt*(gn - eta*P)*B
-    nex[1]      += dt*(eta*P*B - y[1]/tau)
+    dydt          = np.copy(y)
+    dydt[0]      = (gn - eta*P)*B
+    dydt[1]      = eta*P*B - y[1]/tau
     for i in range(N-1): 
-        nex[2+i]+= dt*(y[1+i] - y[2+i])/tau
-    nex[-2]     += dt*(beta*y[N]/tau  - (delta + eta*sum(y[:N+1]))*P + DP/dr**2*Matrix(l)*P)
-    nex[-1]     += dt*(-gn*B/Y + Dn/dr**2*Matrix(l)*n)
-    return nex
+        dydt[2+i]= (y[1+i] - y[2+i])/tau
+    dydt[-2]     = beta*y[N]/tau  - (delta + eta*sum(y[:N+1]))*P + DMP*P
+    dydt[-1]     = -gn*B/Y + DMn*n
+    return y+dydt*dt
 
-def MP1(y,V):
+def MP1(y,V,gn0,DMP,DMn):
     #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
-    N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,DP,Dn,da,delta,dt,dr,l,comp =\
-          V.N,V.gnmax,V.n0,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.DP,V.Dn,V.da,V.delta,V.dt,V.dr,V.l,V.comp
+    N,gnmax,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,da,delta,dt,comp =\
+          V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.da,V.delta,V.dt,V.comp
     gn             = Gamma(gnmax,y[-1],Kn)
-    gn0            = Gamma(gnmax,n0,Kn)
     tau            = Tau(tau0   ,rl,gn0,gn)/N
     tau_I          = f_tau*tau
     beta           = Beta(beta0 ,rb,gn0,gn)
@@ -80,20 +80,20 @@ def MP1(y,V):
     B,P,n          = y[0],y[-2],y[-1]
     P2 = y[-3] if comp else 0
     eta            = eta/da
-    nex            = np.copy(y)
-    nex[0]        += dt*(gn - eta*(P+P2))*B
-    nex[1]        += dt*(eta*P*B - (eta*(P+P2) + 1/tau)*y[1]) #First infected state
-    nex[N+1]      += dt*(eta*(P+P2)*sum(y[1:N+1])         - y[N+1]/tau_I ) #First inhibited state
+    dydt            = np.copy(y)
+    dydt[0]         = (gn - eta*(P+P2))*B
+    dydt[1]         = eta*P*B - (eta*(P+P2) + 1/tau)*y[1] #First infected state
+    dydt[N+1]       = eta*(P+P2)*sum(y[1:N+1])         - y[N+1]/tau_I  #First inhibited state
     for i in range(2,N+1):  #Rest of infected and inhibited states
-        nex[i]  += dt*((y[i-1]  -  y[i]  )/tau - eta*(P+P2)*y[i])
-        nex[N+i]+= dt*( y[N+i-1] - y[N+i])/tau_I
+        dydt[i]   = (y[i-1]  -  y[i]  )/tau - eta*(P+P2)*y[i]
+        dydt[N+i] = ( y[N+i-1] - y[N+i])/tau_I
     if comp:
-        nex[2*N+1] += dt*(eta*P2*B - y[2*N+1]/tau) #First P2-infected state
+        dydt[2*N+1]  = eta*P2*B - y[2*N+1]/tau #First P2-infected state
         for i in range(2,N+1): #Rest of P2-infected states
-            nex[2*N+i]+= dt*(y[2*N+i-1] - y[2*N+i])/tau
-        nex[-3] += dt*(beta*y[3*N]/tau - P2*(eta*sum(y[:3*N+1])+delta) + DP/dr**2*Matrix(l)*P2)
-    nex[-2]       += dt*(beta*y[N]/tau + beta_I*y[2*N]/tau_I - \
-                         (delta + eta*sum(y[:(2+comp)*N+1]))*P + DP/dr**2*Matrix(l)*P)
-    nex[-1]       += dt*(-gn*B/Y + Dn/dr**2*Matrix(l)*n)
-    return nex
+            dydt[2*N+i] = (y[2*N+i-1] - y[2*N+i])/tau
+        dydt[-3]  = beta*y[3*N]/tau - P2*(eta*sum(y[:3*N+1])+delta) + DMP*P2
+    dydt[-2]        = beta*y[N]/tau + beta_I*y[2*N]/tau_I - \
+                         (delta + eta*sum(y[:(2+comp)*N+1]))*P + DMP*P
+    dydt[-1]        = -gn*B/Y + DMn*n
+    return y+dydt*dt
 
