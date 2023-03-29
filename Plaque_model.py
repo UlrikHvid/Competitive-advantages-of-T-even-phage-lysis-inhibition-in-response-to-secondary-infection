@@ -44,7 +44,7 @@ def MPShell(model,y0,V,t,frames=False):
                 sim[np.where(frameind == i)] = ynext
     elif model == "MP1":
         for i in tqdm(range(its)):
-            ynext = MP0(ynext,V)
+            ynext = MP1(ynext,V)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
     return sim
