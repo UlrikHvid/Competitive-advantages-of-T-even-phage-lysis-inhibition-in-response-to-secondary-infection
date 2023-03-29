@@ -1,5 +1,5 @@
-#![logo](T4-logo.png = 250x250)
-<img src="https://github.com/favicon.ico" width="48">
+##![logo](T4-logo.png = 250x250)
+<img src=T4-logo.png width="48">
 
 ## :rocket: About
 
