@@ -1,4 +1,4 @@
-![logo](.T4-logo.png)
+![logo](T4-logo.png)
 
 ## :rocket: About
 
