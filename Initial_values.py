@@ -65,7 +65,7 @@ def IVS(model,V): #Initial values for spatial models
     swim   = True if model in ["MS0","MS1","MS2","MS3"] else False
     if swim:
         ispot = int(V.rspot/V.dr)
-        y0[0,:ispot]  = 10**6/(np.pi*V.rspot**2)
+        y0[0,:ispot]  = 10**6/(np.pi*(ispot*V.dr)**2)
         y0[-2,:ispot] = y0[0,0]
         y0[-3,:ispot] = y0[0,0] if V.comp else 0
         y0[-1]        = V.n0 #/micron**2
@@ -103,8 +103,7 @@ class DVS(): #Default values for spatial models
         self.dt     = dr**2/Dn/3 #Ensures stability of diffusion algorithm
         self.l      = int(self.Rmax/self.dr)
         self.delta  = 0.003/60
-        self.chi    = 10**4
+        self.chi    = 2*10**4
         self.am     = self.n0/100
         self.ap     = self.n0*5
-        self.extinct= 0
 

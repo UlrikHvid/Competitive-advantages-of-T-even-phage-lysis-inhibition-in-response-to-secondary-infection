@@ -97,3 +97,16 @@ def MP1(y,V,gn0,DMP,DMn):
     dydt[-1]        = -gn*B/Y + DMn*n
     return y+dydt*dt
 
+################################################################################################################################################
+
+#Analytical functions
+
+def rhalf(sim,LIN,V):
+    rhalfarr = np.zeros(len(sim))
+    for i,frame in enumerate(sim):
+        Btot = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)
+        halfmax = Btot[-1]/2
+        for j in range(len(Btot)):
+            if Btot[j] < halfmax and Btot[j+1] > halfmax:
+                rhalfarr[i] = j*V.dr/1000
+    return rhalfarr

@@ -147,7 +147,7 @@ def M3CPlotter_Simple(sol,N,M,scale = "log",lb = 1000,figtitle = 0):
 
 #For outputting animations
 
-def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
+def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False,legendloc="upper left",Btot = False):
     frames = len(sim)
     arrlist = [frame for frame in sim]
     if not rf:
@@ -158,38 +158,44 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False):
     else:
         LIN = False
     rarr = np.linspace(r0,rf,rf-r0)*V.dr/1000 #mm
-    lineB,  = ax.plot(rarr,arrlist[0][0,r0:rf],label = "B",color = "blue")
-    lineP,  = ax.plot(rarr,arrlist[0][-2,r0:rf],label = "P",color = "black")
-    linen,  = ax.plot(rarr,arrlist[0][-1,r0:rf],label = "n",color = "gray")
-    lineL,  = ax.plot(rarr,sum(arrlist[0][ 1:11])[r0:rf],label = "L",color = "darkviolet")
+    lineB,  = ax.plot(rarr,arrlist[0][0,r0:rf],label = r"$B$",color = "blue")
+    lineP,  = ax.plot(rarr,arrlist[0][-2,r0:rf],label = r"$P$",color = "black")
+    linen,  = ax.plot(rarr,arrlist[0][-1,r0:rf],label = r"$n$",color = "gray")
+    lineL,  = ax.plot(rarr,sum(arrlist[0][ 1:V.N+1])[r0:rf],label = r"$L$",color = "darkviolet")
     if LIN:
-        lineLI, = ax.plot(rarr,sum(arrlist[0][11:21])[r0:rf],label = "LI",color = "crimson")
+        lineLI, = ax.plot(rarr,sum(arrlist[0][V.N+1:2*V.N+1])[r0:rf],label = r"$L_I$",color = "crimson")
     if V.comp:
-        linePr, = ax.plot(rarr,arrlist[0][-3,r0:rf],label = "Pr",ls = "--", color = "black")
-        lineLr, = ax.plot(rarr,sum(arrlist[0][21:31])[r0:rf],label = "Lr",ls = "--",color = "darkviolet")
+        linePr, = ax.plot(rarr,arrlist[0][-3,r0:rf],label = r"$P_r$",ls = "--", color = "black")
+        lineLr, = ax.plot(rarr,sum(arrlist[0][2*V.N+1:3*V.N+1])[r0:rf],label = r"$L_r$",ls = "--",color = "darkviolet")
+    if Btot:
+        lineBt,  = ax.plot(rarr,sum(arrlist[0][:(1+LIN+V.comp)*V.N+1])[r0:rf],label = r"$B_{tot}$",ls = (0,(1,3)),color = "g")
     lineList = [lineB,lineP,linen,lineL]
     if LIN:
         lineList.append(lineLI)
         if V.comp:
             lineList.append(linePr)
             lineList.append(lineLr)
-    ax.set_ylim(ylim[0],ylim[1])
-    ax.legend(loc = "upper left")
-    ax.set_yscale("log")
-    ax.set_xlabel("r [mm]")
-    ax.set_ylabel(r"Concentration [$\mu$m$^{-2}$]")
+    if Btot:
+        lineList.append(lineBt)
+    _ = ax.set_ylim(ylim[0],ylim[1])
+    _ = ax.legend(loc = legendloc)
+    _ = ax.set_yscale("log")
+    _ = ax.set_xlabel("r [mm]")
+    _ = ax.set_ylabel(r"Concentration [$\mu$m$^{-2}$]")
     # function to update figure
     def updatefig(j):
         # set the data in the axesimage object
         lineList[0].set_ydata(arrlist[j][0, r0:rf])
         lineList[1].set_ydata(arrlist[j][-2,r0:rf])
         lineList[2].set_ydata(arrlist[j][-1,r0:rf])
-        lineList[3].set_ydata(sum(arrlist[j][1:11])[r0:rf])
+        lineList[3].set_ydata(sum(arrlist[j][1:V.N+1])[r0:rf])
         if LIN:
-            lineList[4].set_ydata(sum(arrlist[j][11:21])[r0:rf])
+            lineList[4].set_ydata(sum(arrlist[j][V.N+1:2*V.N+1])[r0:rf])
             if V.comp:
                 lineList[5].set_ydata(arrlist[j][-3,r0:rf])
-                lineList[6].set_ydata(sum(arrlist[j][21:31])[r0:rf])
+                lineList[6].set_ydata(sum(arrlist[j][2*V.N+1:3*V.N+1])[r0:rf])
+        if Btot:
+            lineList[4+LIN+2*V.comp].set_ydata(sum(arrlist[j][:(1+LIN+V.comp)*V.N+1])[r0:rf])
         ax.set_title(f"t = {np.round((j)*T/(frames-1))} min")
         # return the artists set
         return lineList
