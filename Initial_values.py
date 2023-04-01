@@ -19,21 +19,21 @@ def IV(model,N=10,M=10,comp = 0):#Initial values
 
 class DV():
     def __init__(self):
-        self.N = 10
-        self.M = 10
-        self.gnmax = np.log(2**(1/20))
-        self.n0 = 10**9
-        self.Kn= self.n0/5
-        self.eta = 5*10**(-10)
-        self.tau0 = 20
-        self.f_tau = 2
-        self.beta0 = 150
-        self.f_beta = 2
-        self.rl = 0.5
-        self.rb = 0.1
-        self.Y = 1
-        self.rr = 0
-        self.comp = 0
+        self.N = 10 #Number of substates
+        self.M = 10 #Number of substates in M3
+        self.gnmax = np.log(2**(1/20)) #Growth rate [/min]
+        self.n0 = 10**9 #Initial nutrient concentration [/ml]
+        self.Kn= self.n0/5 #Nutrient concentration of half max growth [/ml]
+        self.eta = 5*10**(-10) #Adsorption rate [ml/min]
+        self.tau0 = 20 #Min lysis time [min]
+        self.f_tau = 2 #Ratio of LIN lysis time to normal
+        self.beta0 = 150 #Max burst size
+        self.f_beta = 2 #Ratio of LIN burst size to normal 
+        self.rl = 0.5 #Ratio of minimum lysis time to max
+        self.rb = 0.1 #Ratio of minimum burst size to max
+        self.Y = 1 #Nutrient yield constant (choice of nutrient unit)
+        self.rr = 0 #Dilution rate in chemostat model
+        self.comp = 0 #Competition boolean
 
 def Const(ob,M): #Gather constants in an array of a length appropriate for the model
     if M == "M0":
@@ -78,32 +78,33 @@ def IVS(model,V): #Initial values for spatial models
     return y0
 
 class DVS(): #Default values for spatial models
-    def __init__(self,rho = 10**9,dr = 20,Rmax = 10**4,da = 500,Dn = 5*10**4):
-        self.N      = 10
-        self.M      = 10
-        self.da     = da #Microns
-        self.gnmax  = np.log(2**(1/20)) #/min
-        self.n0     = rho*10**(-12)*self.da #/micron**2
-        self.Kn     = self.n0/5
-        self.eta    = 5*10**2 #micron**3/min
-        self.tau0   = 20 #min
-        self.f_tau  = 2 
-        self.beta0  = 150
-        self.f_beta = 2
-        self.rl     = 0
-        self.rb     = 0.1
-        self.Y      = 1
-        self.comp   = 0
-        self.DP     = 240 #Micron**2/min
-        self.DB     = 800 #Micron**2/min
-        self.Dn     = Dn #Micron**2/min
-        self.Rmax   = Rmax #Microns
-        self.rspot  = 3*10**3 #Microns
-        self.dr     = dr #Microns
-        self.dt     = dr**2/Dn/3 #Ensures stability of diffusion algorithm
-        self.l      = int(self.Rmax/self.dr)
-        self.delta  = 0.003/60
-        self.chi    = 2*10**4
-        self.am     = self.n0/100
-        self.ap     = self.n0*5
+    def __init__(self,rho = 10**9,dr = 20,Rmax = 3*10**3,da = 500,Dn = 5*10**4):
+        #rho [/ml] is the richness of the swimming medium
+        self.N      = 10 #Number of substates
+        self.M      = 10 #Number of substates in M3
+        self.da     = da #Agar thickness [micron]
+        self.gnmax  = np.log(2**(1/20)) #Mac growth rate [/min]
+        self.n0     = rho*10**(-12)*self.da #Initial nutrient concentration [/micron**2]
+        self.Kn     = self.n0/5 #Nut. concentration of half max growth rate [/min]
+        self.eta    = 5*10**2 #Adsorption rate [micron**3/min]
+        self.tau0   = 20 #Minimum lysis time [min]
+        self.f_tau  = 2 #Ratio of LIN lysis time to normal 
+        self.beta0  = 150 #Max burst size
+        self.f_beta = 2 #Ratio of LIN burst size to normal
+        self.rl     = 0 #Ratio of min lysis time to max 
+        self.rb     = 0.1 #Ratio of min burst size to max
+        self.Y      = 1 #Yield constant (choice of unit)
+        self.comp   = 0 #Competition boolean
+        self.DP     = 240 #Phage diffusion constant [micron**2/min]
+        self.DB     = 800 #Bacteria diff. const. [micron**2/min]
+        self.Dn     = Dn #Nutrient diff. const. [micron**2/min]
+        self.Rmax   = Rmax #Plate radius [micron]
+        self.rspot  = 3*10**3 #Inoculation radius [micron]
+        self.dr     = dr #Pixel size [micron]
+        self.dt     = dr**2/Dn/3 #Time step (Ensures stability of diffusion algorithm) [min]
+        self.l      = int(self.Rmax/self.dr) #Number of pixels
+        self.delta  = 0.00005 #Phage decay rate
+        self.chi    = 2*10**4 #Chemotactic coefficient
+        self.am     = self.n0/100 #High nutrient sensing constant
+        self.ap     = self.n0*5 #Low nutrient sensing constant
 

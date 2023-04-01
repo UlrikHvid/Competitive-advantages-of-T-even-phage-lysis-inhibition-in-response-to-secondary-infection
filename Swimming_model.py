@@ -66,7 +66,6 @@ def MSShell(model,y0,V,t,frames=False):
     return sim
 
 def MS0(y,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
-    #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
     N,gnmax,Kn,eta,tau0,beta0,rl,rb,Y,delta,chi,am,ap,dt,dr,l = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l
     B,P,n        = y[0],y[-2],y[-1]
     gn           = Gamma(gnmax,n,Kn)
@@ -90,7 +89,6 @@ def MS0(y,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
     return nex
 
 def MS1(y,V,gn0,DMB,DMP,DMn,rarr,areaarr,n_matrix,cellgrid):
-    #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
     N,gnmax,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,delta,chi,am,ap,dt,dr,l,comp = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.delta,V.chi,V.am,V.ap,V.dt,V.dr,V.l,V.comp
     B,P,n          = y[0],y[-2],y[-1]
     gn             = Gamma(gnmax,n,Kn)

@@ -11,7 +11,7 @@ from Broth_model import Gamma, Beta, Tau
 
 #Subfunctions
 
-def Area(dr,i):
+def Area(dr,i): #Find area of a shell in the grid
     return np.pi*dr**2*(2*i-1)
 
 def Phi_l(i):
@@ -19,7 +19,7 @@ def Phi_l(i):
 def Phi_u(i):
     return (i)/(i-1/2)
 
-def Matrix(l):
+def Matrix(l): #Diffusion matrix
     phi_l = Phi_l(np.arange(2,l))
     phi_l = np.append(phi_l,Phi_l(l) + Phi_u(l))
     phi_u = Phi_u(np.arange(1,l))
@@ -52,14 +52,13 @@ def MPShell(model,y0,V,t,frames=False):
     return sim
 
 def MP0(y,V,gn0,DMP,DMn):
-    #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
     N,gnmax,Kn,eta,tau0,beta0,rl,rb,Y,da,delta,dt = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.da,V.delta,V.dt
     gn           = Gamma(gnmax,y[-1],Kn)
     tau          = Tau(tau0   ,rl,gn0,gn)/N
     beta         = Beta(beta0 ,rb,gn0,gn)
     B,P,n        = y[0],y[-2],y[-1]
     eta          = eta/da
-    dydt          = np.copy(y)
+    dydt         = np.copy(y)
     dydt[0]      = (gn - eta*P)*B
     dydt[1]      = eta*P*B - y[1]/tau
     for i in range(N-1): 
@@ -69,7 +68,6 @@ def MP0(y,V,gn0,DMP,DMn):
     return y+dydt*dt
 
 def MP1(y,V,gn0,DMP,DMn):
-    #prev: First dimension represents variable (B,P etc.). Second represents space coordinate
     N,gnmax,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,da,delta,dt,comp =\
           V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.f_tau,V.beta0,V.f_beta,V.rl,V.rb,V.Y,V.da,V.delta,V.dt,V.comp
     gn             = Gamma(gnmax,y[-1],Kn)
