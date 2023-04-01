@@ -29,7 +29,7 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not p
     plt.grid(axis="y", which = "major")
     plt.legend()
     if figtitle:
-        plt.savefig(figtitle)
+        plt.savefig(figtitle + ".jpg")
     return
 
 def BrothPlotter_AllStates(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
