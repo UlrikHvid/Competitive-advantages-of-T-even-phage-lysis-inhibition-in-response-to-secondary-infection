@@ -4,7 +4,7 @@
 
 This repository contains simulations of experiments involving bacteriophage T4 in interaction with cultures of e. coli. The purpose of these models is to explore the evolutionary significance of lysis-inhibition which is an important aspect of phage T4's infection strategy. 
 
-The models have been developed by me with guidance from my supervisor Namiko Mitarai. She is currently working on performing the experiements that I simulate.
+The models have been developed by me with guidance from my supervisor Namiko Mitarai at the Center for Models of Life, NBI. She is currently working on performing the experiements that I simulate.
 
 ## :test_tube:  Model explanation
 
