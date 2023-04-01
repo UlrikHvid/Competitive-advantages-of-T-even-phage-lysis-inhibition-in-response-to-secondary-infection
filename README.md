@@ -10,10 +10,8 @@ The models have been developed by me with guidance from my supervisor Namiko Mit
 
 I have written three separate types of simulations:
 
-M: Well-mixed system (a broth culture). Here there is no spatial component.
-
-MP: Plaque experiment. Phages are allowed to diffuse through space, but bacteria are immobile.
-
+M: Well-mixed system (a broth culture). Here there is no spatial component.\
+MP: Plaque experiment. Phages are allowed to diffuse through space, but bacteria are immobile.\
 MS: Experiment in swimming medium. Bacteria and phages are inoculated together in the center of the plate. Phages diffuse and bacteria swim towards the nutrient gradients that arise once they start consuming nutrients locally.
 
 The variables are:
@@ -24,13 +22,13 @@ LI: Lysis-inhibited (superinfected) bacteria \
 P: Phages \
 n: Nutrients\
 Lr: r-mutant infected bacteria (competition version)\
-Pr: r-mutant phages (competition version) \
+Pr: r-mutant phages (competition version) 
 
-M is integrated with scipy's solve_ivp (4th order Runge Kutta), while MP and MS are integrated manually with a fixed time step.
+M is integrated with scipy's solve_ivp (4th order Runge Kutta), while MP and MS are integrated manually (forward Euler) with a fixed time step.
 
 The spatial simulations, MP and MS, assume radial symmetry and can therefore run fairly efficiently.
 
-The model names further get the suffixes 0, 1 or 1C. Here, 0 corresponds to a simulation of a so-called T4 r-mutant, which cannot perform lysis inhibition. 1 designates the wild-type T4 which can. 1C means that the simulation includes both strains in competition with each other.
+The model names get the suffixes 0, 1 or 1C. Here, 0 corresponds to a simulation of a so-called T4 r-mutant, which cannot perform lysis inhibition. 1 designates the wild-type T4 which can. 1C means that the simulation includes both strains in competition with each other. Eg. M1C means a simulation of competition in broth culture, and MP0 means an r-mutant plaque.
 
 ## :gear:  Requirements
 
@@ -40,6 +38,8 @@ Nothing fancy. Numpy, scipy, matplotlib, tqdm
 
 The gifs in the repository show example simulations of the spatial models, MP and MS. In addition, I include a notebook that can run each of the simulations. Many parameters go into the models, particularly MS, and I refer to the comments in "Initial_values.py" for brief explanations of their meaning. The default parameter values are attributes of the classes V (for model M) or VS (for MP and MS). Feel free to play around with the model by changing those values.
 
-Note, the function GifGenerator saves a gif, but the gif does not run inside the notebook.
+Note, the function GifGenerator saves a gif, but it does not play inside the notebook.
 
 One technical comment: The default spatial resolution is dr = 20. However, the spatial model MS, which is the most complex, requires a significantly finer resolution. I have left the default value in the notebook, because it reproduces roughly the right behavior, and because a more precise simulation requires an impractical computation time.
+
+Enjoy!
