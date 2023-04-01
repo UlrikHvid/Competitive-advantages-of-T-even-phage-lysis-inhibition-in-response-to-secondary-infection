@@ -18,19 +18,13 @@ MS: Experiment in swimming medium. Bacteria and phages are inoculated together i
 
 The variables are:
 
-B: Uninfected bacteria
-
-L: Infected bacteria
-
-LI: Lysis-inhibited (superinfected) bacteria
-
-P: Phages 
-
-n: Nutrients
-
-Lr: r-mutant infected bacteria (competition version)
-
-Pr: r-mutant phages (competition version)
+B: Uninfected bacteria \
+L: Infected bacteria \
+LI: Lysis-inhibited (superinfected) bacteria \
+P: Phages \
+n: Nutrients\
+Lr: r-mutant infected bacteria (competition version)\
+Pr: r-mutant phages (competition version) \
 
 M is integrated with scipy's solve_ivp (4th order Runge Kutta), while MP and MS are integrated manually with a fixed time step.
 
