@@ -1,7 +1,6 @@
 import numpy as np
 import scipy.sparse as sp
 from scipy.interpolate import RegularGridInterpolator
-from time import time
 from tqdm import tqdm
 import sys
 sys.path.insert(-1,"/nbi/nbicmplx/cell/dhm160")

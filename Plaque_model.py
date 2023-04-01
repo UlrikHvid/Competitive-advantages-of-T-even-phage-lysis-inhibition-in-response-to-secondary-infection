@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 import scipy.sparse as sp
-from time import time
 from tqdm import tqdm
 import sys
 sys.path.insert(-1,"/nbi/nbicmplx/cell/dhm160")

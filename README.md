@@ -38,7 +38,7 @@ Nothing fancy. Numpy, scipy, matplotlib, tqdm
 
 ## :ringed_planet:  Showcase notebook
 
-The gifs in the repository show example simulations of the spatial models, MP and MS. In addition, I include a notebook that can run each of the simulations. Many parameters go into the models, particularly MS, and I refer to the comments in "Initial_values.py" for brief explanations of their meaning. The default parameter values are attributes of the classes V (for model M) or VS (for MP and MS). Feel free to play around with the model by changing those values.
+The gifs in the repository show example simulations of the spatial models, MP and MS. In addition, I include a notebook that can run each of the simulations. The default parameter values are attributes of the classes V (for model M) or VS (for MP and MS). Refer to the comments in "Initial_values.py" for the names - as well as brief explanations - of the parameters. Feel free to play around with the model by changing those values. Note, however, that some parameters must be passed as arguments to the class, because they couple to other parameters.
 
 Note, the function GifGenerator saves a gif, but it does not play inside the notebook.
 

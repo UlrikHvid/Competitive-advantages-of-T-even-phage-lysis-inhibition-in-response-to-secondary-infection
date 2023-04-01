@@ -5,7 +5,6 @@ from scipy.integrate import solve_ivp
 import scipy.sparse as sp
 from scipy.interpolate import RegularGridInterpolator
 import matplotlib.animation as animation
-from time import time
 from tqdm import tqdm
 
 ###########################################################################
