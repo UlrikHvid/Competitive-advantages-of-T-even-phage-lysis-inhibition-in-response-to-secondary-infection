@@ -1,4 +1,7 @@
-<img src=T4-logo.png width="120">
+<p align="center">
+  <img src=T4-logo.png width="120">
+</p>
+
 
 ## :rocket: Welcome
 
