@@ -98,12 +98,20 @@ def MP1(y,V,gn0,DMP,DMn):
 
 #Analytical functions
 
-def rhalf(sim,LIN,V):
+def rhalf(sim,LIN,V,var = "Btot"):
     rhalfarr = np.zeros(len(sim))
-    for i,frame in enumerate(sim):
-        Btot = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)
-        halfmax = Btot[-1]/2
-        for j in range(len(Btot)):
-            if Btot[j] < halfmax and Btot[j+1] > halfmax:
-                rhalfarr[i] = j*V.dr/1000
+    if var == "Btot":
+        for i,frame in enumerate(sim):
+            Btot = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)
+            halfmax = Btot[-1]/2
+            for j in range(len(Btot)):
+                if Btot[j] < halfmax and Btot[j+1] > halfmax:
+                    rhalfarr[i] = j*V.dr/1000
+    elif var == "B":
+        for i,frame in enumerate(sim):
+            B = frame[0]
+            halfmax = B[-1]/2
+            for j in range(len(B)):
+                if B[j] < halfmax and B[j+1] > halfmax:
+                    rhalfarr[i] = j*V.dr/1000
     return rhalfarr
