@@ -70,11 +70,11 @@ def IVS(model,V): #Initial values for spatial models
         y0[-3,:ispot] = y0[0,0] if V.comp else 0
         y0[-1]        = V.n0 #/micron**2
     else:
-        y0[0]       = 1/40 #/micron**2
-        y0[1,0]     = 1/Area(V.dr,1) #/micron**2
+        y0[0]         = 1/40 #/micron**2
+        y0[1,0]       = 1/Area(V.dr,1) #/micron**2
         if V.comp:
-            y0[2*V.N+1,0] = 1/Area(V.V.dr,1) #/micron**2
-        y0[-1]      = V.n0 #/micron**2
+            y0[2*V.N+1,0]= 1/Area(V.dr,1) #/micron**2
+        y0[-1]        = V.n0 #/micron**2
     return y0
 
 class DVS(): #Default values for spatial models
