@@ -7,7 +7,9 @@ import numpy as np
 
 #Plotter functions
 
-def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not plotting infected substates
+def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0): #Not plotting infected substates
+    if not ylim:
+        ylim = (1E3,np.max(yarr)*1.5)
     N,comp = V.N,V.comp
     tarr = tarr/60
     plt.plot(tarr,yarr[-1],label = "n",color = "gray")
@@ -22,8 +24,7 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",lb = 1000,figtitle = 0): #Not p
         plt.plot(tarr,yarr[-3],label = r"P$_r$",ls = "--",color = "black")
         plt.plot(tarr,Lr,label = r"L$_r$",ls = "--",color = "darkviolet")
     plt.yscale(scale)
-    if scale == "log":
-        plt.ylim(lb,np.max(yarr)*1.5)
+    plt.ylim(ylim)
     plt.ylabel(r"Concentration [ml$^{-1}$]")
     plt.xlabel("Time [h]")
     plt.grid(axis="y", which = "major")
