@@ -18,12 +18,12 @@ def IV(model,N=10,M=10,comp = 0):#Initial values
     return y0
 
 class DV():
-    def __init__(self):
+    def __init__(self,n0 = 10**9):
         self.N = 10 #Number of substates
         self.M = 10 #Number of substates in M3
         self.gnmax = np.log(2**(1/20)) #Growth rate [/min]
-        self.n0 = 10**9 #Initial nutrient concentration [/ml]
-        self.Kn= self.n0/5 #Nutrient concentration of half max growth [/ml]
+        self.n0 = n0 #Initial nutrient concentration [/ml]
+        self.Kn= n0/5 #Nutrient concentration of half max growth [/ml]
         self.eta = 5*10**(-10) #Adsorption rate [ml/min]
         self.tau0 = 20 #Min lysis time [min]
         self.f_tau = 2 #Ratio of LIN lysis time to normal
@@ -103,7 +103,7 @@ class DVS(): #Default values for spatial models
         self.dr     = dr #Pixel size [micron]
         self.dt     = dr**2/Dn/3 #Time step (Ensures stability of diffusion algorithm) [min]
         self.l      = int(self.Rmax/self.dr) #Number of pixels
-        self.delta  = 0.00005 #Phage decay rate
+        self.delta  = 0 #Phage decay rate
         self.chi    = 2*10**4 #Chemotactic coefficient
         self.am     = self.n0/100 #High nutrient sensing constant
         self.ap     = self.n0*5 #Low nutrient sensing constant
