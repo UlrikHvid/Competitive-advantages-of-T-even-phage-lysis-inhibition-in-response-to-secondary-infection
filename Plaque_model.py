@@ -18,25 +18,27 @@ def Phi_l(i):
 def Phi_u(i):
     return (i)/(i-1/2)
 
-def Matrix(l): #Diffusion matrix
+def Matrix(l,absorbing = False): #Diffusion matrix
     phi_l = Phi_l(np.arange(2,l))
     phi_l = np.append(phi_l,Phi_l(l) + Phi_u(l))
     phi_u = Phi_u(np.arange(1,l))
     diag = np.array([-2]*(l))
+    if absorbing:
+        phi_l[-1],diag[-1] = 0,0
     return sp.diags([phi_l,diag,phi_u],[-1,0,1])
 
 ################################################################################################################
 
 #Plaque models
 
-def MPShell(model,y0,V,t,frames=False):
+def MPShell(model,y0,V,t,frames=False,absorbing = False):
     if not frames:
         frames = int(t/V.tau0) #Default value for frames
     its = int(t/V.dt)
     sim = np.zeros((frames,len(y0),V.l)) #Holds the saved data
     frameind = np.linspace(0,its-1,frames,dtype = int)
     ynext = np.copy(y0)
-    DMn,DMP = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l)/V.dr**2
+    DMn,DMP = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
     gn0          = Gamma(V.gnmax,V.n0,V.Kn)
     if model == "MP0":
         for i in tqdm(range(its)):
@@ -115,3 +117,20 @@ def rhalf(sim,LIN,V,var = "Btot"):
                 if B[j] < halfmax and B[j+1] > halfmax:
                     rhalfarr[i] = j*V.dr/1000
     return rhalfarr
+
+def Pfront(sim,V,LIN = False):
+    Pfrontarr = np.zeros(len(sim))
+    gn0          = Gamma(V.gnmax,V.n0,V.Kn)
+    DMP =  V.DP*Matrix(V.l)/V.dr**2
+    for i,frame in enumerate(sim):
+        P = frame[-2]
+        gn           = Gamma(V.gnmax,frame[-1],V.Kn)
+        beta         = Beta(V.beta0 ,V.rb,gn0,gn)
+        tau          = Tau(V.tau0   ,V.rl,gn0,gn)/V.N
+        burst = beta*frame[V.N]/tau + LIN*beta*V.f_beta*frame[2*V.N]/tau/V.f_tau
+        diff = DMP*P
+        for j in np.arange(len(P)-2,0,-1):
+            if burst[j] > diff[j] and burst[j+1] < diff[j+1]:
+                Pfrontarr[i] = j*V.dr/1000
+                break
+    return Pfrontarr

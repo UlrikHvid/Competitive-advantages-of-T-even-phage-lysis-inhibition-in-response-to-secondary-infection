@@ -78,7 +78,7 @@ def IVS(model,V): #Initial values for spatial models
     return y0
 
 class DVS(): #Default values for spatial models
-    def __init__(self,rho = 10**9,dr = 20,Rmax = 3*10**3,da = 500,Dn = 5*10**4):
+    def __init__(self,rho = 10**9,dr = 20,Rmax = 3*10**3,da = 500,Dn = 5*10**4,n0 = False):
         #rho [/ml] is the richness of the swimming medium
         self.N      = 10 #Number of substates
         self.M      = 10 #Number of substates in M3
