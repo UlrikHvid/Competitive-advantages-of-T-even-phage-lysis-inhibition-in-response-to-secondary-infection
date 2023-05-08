@@ -127,10 +127,32 @@ def Pfront(sim,V,LIN = False):
         gn           = Gamma(V.gnmax,frame[-1],V.Kn)
         beta         = Beta(V.beta0 ,V.rb,gn0,gn)
         tau          = Tau(V.tau0   ,V.rl,gn0,gn)/V.N
-        burst = beta*frame[V.N]/tau + LIN*beta*V.f_beta*frame[2*V.N]/tau/V.f_tau
+        burst = beta*frame[V.N]/tau
+        if LIN:
+            burst += beta*V.f_beta*frame[2*V.N]/tau/V.f_tau
         diff = DMP*P
         for j in np.arange(len(P)-2,0,-1):
             if burst[j] > diff[j] and burst[j+1] < diff[j+1]:
                 Pfrontarr[i] = j*V.dr/1000
                 break
     return Pfrontarr
+
+def Pdet(sim,V,B0):
+    Pdet = np.zeros(len(sim)) #Radius of good statistics
+    for i,frame in enumerate(sim):
+        P = frame[-2]
+        for j in np.arange(len(P)-2,0,-1):
+            if P[j] > B0 and P[j+1] < B0:
+                Pdet[i] = j*V.dr/1000
+                break
+    return Pdet
+
+def rsuper(sim,V):
+    rsuper = np.zeros(len(sim))
+    for i,frame in enumerate(sim):
+        B = frame[0]
+        P = frame[-2]
+        for j in range(len(P)-2):
+            if P[j] > B[j] and P[j+1] < B[j+1]:
+                rsuper[i] = j*V.dr/1000
+    return rsuper
