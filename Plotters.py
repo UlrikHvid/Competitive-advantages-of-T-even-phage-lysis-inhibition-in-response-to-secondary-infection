@@ -33,47 +33,68 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0): #Not 
         plt.savefig(figtitle + ".jpg")
     return
 
-def BrothPlotter_AllStates(tarr,yarr,N,scale = "log",lb = 1000,figtitle = 0):
+def BrothPlotter_AllStates(model,V,tarr,yarr,scale = "log",ylim = False,loc = None,figtitle = 0):
+    if not ylim:
+        ylim = (1E3,np.max(yarr)*1.5)
+    N,comp = V.N,V.comp
+    tarr = tarr/60
+    if model == "M1":
+        LIN = True
+    else:
+        LIN = False
     for i,var in enumerate(yarr):
         ls = "-"
         alpha = 1
         label = None
         if i == 0: #Susceptible
-            label = "B"
-            color = "orange"
-        elif i == 2*N + 1: #Phages
-            label = "P"
+            label = r"$B$"
+            color = "blue"
+        elif i == len(yarr)-2: #Phages
+            label = r"$P$"
             color = "black"
-        elif i == 2*N + 2: #Nutrition
-            label = "n"
+        elif i == len(yarr)-1: #Nutrition
+            label = r"$n$"
             color = "gray"
         if i > 0 and i <=N: #Noninhibited infected
-            color = "red"
+            color = "darkviolet"
             if i == 1:
-                label = "L1"
+                label = r"$L_1$"
             elif i == N:
-                label = f"L{N}"
-                ls = "--"
+                label = r"$L_{10}$"
+                ls = "dotted"
             else:
                 alpha = 0.1
-        elif i > N and i < 2*N+1: #Inhibited infected
-            color = "blue"
-            if i == N+1:
-                label = "LI1"
-            elif i == 2*N:
-                label = f"LI{N}"
-                ls = "--"
-            else:
-                alpha = 0.1
+        if LIN:
+            if i > N and i < 2*N+1: #Inhibited infected
+                color = "crimson"
+                if i == N+1:
+                    label = r"$L_{I,1}$"
+                elif i == 2*N:
+                    label = r"$L_{I,10}$"
+                    ls = "dotted"
+                else:
+                    alpha = 0.1
+            if comp:
+                if i >2*N and i < 2*N+1:
+                    color = "darkviolet"
+                    ls = "--"
+                    if i == 2*N+1:
+                        label = "Lr1"
+                    elif i == 3*N:
+                        label = f"LI{N}"
+                        ls = "dotted"
+                    else:
+                        alpha = 0.1
         plt.plot(tarr,var,label = label,ls = ls,alpha = alpha,color = color)
     if scale == "log":
-        plt.ylim(lb,np.max(yarr)*1.5)
+        plt.ylim(ylim[0],ylim[1])
     plt.yscale(scale)
     plt.ylabel(r"Concentration [ml$^{-1}$]")
     plt.xlabel("Time [min]")
-    plt.legend()
+    plt.legend(loc = loc)
+    plt.grid(axis="y", which = "major")
     if figtitle:
-        plt.savefig(figtitle)
+        plt.savefig(figtitle+".jpg")
     return
 
 
