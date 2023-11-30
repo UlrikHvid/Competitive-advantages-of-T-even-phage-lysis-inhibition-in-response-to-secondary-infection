@@ -33,19 +33,19 @@ def Matrix(l,absorbing = False): #Diffusion matrix
 
 def MPShell(model,y0,V,t,frames=False,absorbing = False):
     if not frames:
-        frames = int(t/V.tau0) #Default value for frames
-    its = int(t/V.dt)
-    sim = np.zeros((frames,len(y0),V.l)) #Holds the saved data
-    frameind = np.linspace(0,its-1,frames,dtype = int)
-    ynext = np.copy(y0)
-    DMn,DMP = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
-    gn0          = Gamma(V.gnmax,V.n0,V.Kn)
-    if model == "MP0":
+        frames    = int(t/V.tau0) #Default value for frames
+    its           = int(t/V.dt)
+    sim           = np.zeros((frames,len(y0),V.l)) #Holds the saved data
+    frameind      = np.linspace(0,its-1,frames,dtype = int)
+    ynext         = np.copy(y0)
+    DMn,DMP       = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
+    gn0           = Gamma(V.gnmax,V.n0,V.Kn)
+    if model      == "MP0":
         for i in tqdm(range(its)):
             ynext = MP0(ynext,V,gn0,DMP,DMn)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
-    elif model == "MP1":
+    elif model    == "MP1":
         for i in tqdm(range(its)):
             ynext = MP1(ynext,V,gn0,DMP,DMn)
             if i in frameind:
