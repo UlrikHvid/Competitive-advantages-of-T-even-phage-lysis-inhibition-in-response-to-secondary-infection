@@ -9,7 +9,6 @@ from tqdm import tqdm
 
 ###########################################################################
 
-
 def Gamma(gnmax, n, Kn): 
     return gnmax*n/(Kn + n)
 
@@ -19,7 +18,7 @@ def Beta(beta0,rb,gn0,gn):
 def Tau(tau0,rl,gn0,gn):
     return tau0/(rl + (1-rl)*gn/gn0)
 
-def MatrixInfected(N): #For quickly interating all infected states
+def MatrixInfected(N): #For quickly integrating all infected states
     subdiag = np.ones(N-1)
     diag = np.ones(N)*-1
     return sp.diags([subdiag,diag],[-1,0])
@@ -49,9 +48,10 @@ def M0(t,y,N,gnmax,n0,Kn,eta,tau0,beta0,rl,rb,Y,rr): #No LIN
     dydt -= rr*y
     return dydt
 
-def M1(t,y,N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,rr,comp = 0):
+def M1(t,y,N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,rr,comp = 0,rtrig = True):
     #y is vector og length (2(N + comp) + 3) containing all variables
     #y[ = [B,L1,...LN,LI1,...LIN,(L21,...L2N,P2,)P,n]]
+    #comp is for competition, and rtrig determines whether r mutants trigger LIN
     gn        = Gamma(gnmax,y[-1],Kn)
     gn0       = Gamma(gnmax,n0,Kn)
     tau       = Tau(tau0   ,rl,gn0,gn)/N
@@ -64,12 +64,21 @@ def M1(t,y,N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,rr,comp = 0):
     #Susceptible
     dydt[0]   = (gn - eta*(P+P2))*B
     #First infected state
-    dydt[1]   = eta*P*B - (eta*(P+P2) + 1/tau)*y[1]
+    if rtrig:
+        dydt[1]   = eta*P*B - (eta*(P+P2) + 1/tau)*y[1]
+    else:
+        dydt[1]   = eta*P*B - (eta*P      + 1/tau)*y[1]
     #First inhibited state
-    dydt[N+1] = eta*(P+P2)*sum(y[1:N+1])         - y[N+1]/tau_I 
+    if rtrig:
+        dydt[N+1] = eta*(P+P2)*sum(y[1:N+1]) - y[N+1]/tau_I 
+    else:
+        dydt[N+1] = eta*P     *sum(y[1:N+1]) - y[N+1]/tau_I
     #Rest of infected and inhibited
     for i in range(2,N+1): 
-        dydt[i]   = (y[i-1]   - y[i])/tau      - eta*(P+P2)*y[i]
+        if rtrig:
+            dydt[i]   = (y[i-1]   - y[i])/tau      - eta*(P+P2)*y[i]
+        else:
+            dydt[i]   = (y[i-1]   - y[i])/tau      - eta*P*y[i]
         dydt[N+i] = (y[N+i-1] - y[N+i])/tau_I
     if comp:
         dydt[2*N+1] = eta*P2*B - y[2*N+1]/tau #First P2-infected state

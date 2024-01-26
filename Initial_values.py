@@ -34,12 +34,13 @@ class DV():
         self.Y = 1 #Nutrient yield constant (choice of nutrient unit)
         self.rr = 0 #Dilution rate in chemostat model
         self.comp = 0 #Competition boolean
+        self.rtrig = True
 
 def Const(ob,M): #Gather constants in an array of a length appropriate for the model
     if M == "M0":
         return [ob.N,ob.gnmax,ob.n0,ob.Kn,ob.eta,ob.tau0,ob.beta0,ob.rl,ob.rb,ob.Y,ob.rr]
     elif M == "M1" or M == "M2":
-        return [ob.N,ob.gnmax,ob.n0,ob.Kn,ob.eta,ob.tau0,ob.f_tau,ob.beta0,ob.f_beta,ob.rl,ob.rb,ob.Y,ob.rr,ob.comp]
+        return [ob.N,ob.gnmax,ob.n0,ob.Kn,ob.eta,ob.tau0,ob.f_tau,ob.beta0,ob.f_beta,ob.rl,ob.rb,ob.Y,ob.rr,ob.comp,ob.rtrig]
     elif M == "M3":
         return [ob.N,ob.M,ob.gnmax,ob.n0,ob.Kn,ob.eta,ob.tau0,ob.beta0,ob.rl,ob.rb,ob.Y,ob.rr,ob.comp]
 
