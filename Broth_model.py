@@ -74,12 +74,12 @@ def M1(t,y,N,gnmax,n0,Kn,eta,tau0,f_tau,beta0,f_beta,rl,rb,Y,rr,comp = 0,rtrig =
     else:
         dydt[N+1] = eta*P     *sum(y[1:N+1]) - y[N+1]/tau_I
     #Rest of infected and inhibited
-    for i in range(2,N+1): 
+    for i in range(2,N+1): #Infected
         if rtrig:
             dydt[i]   = (y[i-1]   - y[i])/tau      - eta*(P+P2)*y[i]
         else:
-            dydt[i]   = (y[i-1]   - y[i])/tau      - eta*P*y[i]
-        dydt[N+i] = (y[N+i-1] - y[N+i])/tau_I
+            dydt[i]   = (y[i-1]   - y[i])/tau      - eta*P     *y[i]
+        dydt[N+i] = (y[N+i-1] - y[N+i])/tau_I #Inhibited
     if comp:
         dydt[2*N+1] = eta*P2*B - y[2*N+1]/tau #First P2-infected state
         for i in range(2,N+1): #Rest of P2-infected states
