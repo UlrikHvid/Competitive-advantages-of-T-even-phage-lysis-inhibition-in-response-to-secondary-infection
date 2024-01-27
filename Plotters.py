@@ -7,22 +7,25 @@ import numpy as np
 
 #Plotter functions
 
-def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0): #Not plotting infected substates
+def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0,plotn = True,figsize = False): #Not plotting infected substates
+    if figsize:
+        plt.figure(figsize = figsize)
     if not ylim:
         ylim = (1E3,np.max(yarr)*1.5)
     N,comp = V.N,V.comp
     tarr = tarr/60
-    plt.plot(tarr,yarr[-1],label = "n",color = "gray")
+    if plotn:
+        plt.plot(tarr,yarr[-1],label = "n",color = "gray")
     plt.plot(tarr,yarr[-2],label = "P",color = "black")
     plt.plot(tarr,yarr[0], label = "B",color = "blue")
-    plt.plot(tarr,sum(yarr[1:N+1]),label = "L",color = "darkviolet")
+    plt.plot(tarr,sum(yarr[1:N+1]),label = r"I$^P$",color = "darkviolet")
     if model == "M1":
         LI = sum(yarr[N+1:2*N+1])
-        plt.plot(tarr,LI,label = r"L$_I$",color = "crimson")
+        plt.plot(tarr,LI,label = "L",color = "crimson")
     if comp:
         Lr = sum(yarr[2*N+1:3*N+1])
-        plt.plot(tarr,yarr[-3],label = r"P$_r$",ls = "--",color = "black")
-        plt.plot(tarr,Lr,label = r"L$_r$",ls = "--",color = "darkviolet")
+        plt.plot(tarr,yarr[-3],label = r"R",ls = "--",color = "black")
+        plt.plot(tarr,Lr,label = r"I$^R$",ls = "--",color = "darkviolet")
     plt.yscale(scale)
     plt.ylim(ylim)
     plt.ylabel(r"Concentration [ml$^{-1}$]")
@@ -30,7 +33,7 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0): #Not 
     plt.grid(axis="y", which = "major")
     plt.legend()
     if figtitle:
-        plt.savefig(figtitle + ".jpg")
+        plt.savefig(figtitle + ".jpg",bbox_inches='tight')
     return
 
 def BrothPlotter_AllStates(model,V,tarr,yarr,scale = "log",ylim = False,loc = None,figtitle = 0):
