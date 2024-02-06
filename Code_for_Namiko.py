@@ -30,8 +30,8 @@ for it,ftau in enumerate(tqdm(ftauarr)):
     for ib,fbeta in enumerate(ftauarr):
         V.f_tau = ftau
         V.f_beta = fbeta
-        sol0 = solve_ivp(M0,[0,t],y0,args = Const(V,"M0"))
-        sol1 = solve_ivp(M1,[0,t],y0,args = Const(V,"M1"))
+        sol0 = solve_ivp(M0,[0,t],y00,args = Const(V,"M0"))
+        sol1 = solve_ivp(M1,[0,t],y10,args = Const(V,"M1"))
         ratarr[ib,it] = sol1.y[-2,-1]/sol0.y[-2,-1]
 
 ################################################################################
