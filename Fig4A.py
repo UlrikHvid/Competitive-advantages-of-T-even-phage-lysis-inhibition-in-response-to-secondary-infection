@@ -51,9 +51,9 @@ def compute_for_ft(ft_index, ft):
         local_V.f_beta = fb
         result  = MPShell("MP1", local_y0, local_V, t, progress = True)[-1] #Simulate and pick out only last frame
         B       = result[0]
-        zoi     = np.where(B > B[-1]/2)[0][0]*V.dr   
-        Btot    = np.sum(result[:(1+LIN+V.comp)*V.N+1],axis = 0)    #Sum all bacteria
-        psize   = np.where(Btot >= Btot[-1]/2)[0][0]*V.dr   #Picks out the index, multiplied by dr
+        zoi     = np.where(B > B[-1]/2)[0][0]*local_V.dr   
+        Btot    = np.sum(result[:(1+LIN)*local_V.N+1],axis = 0)    #Sum all bacteria
+        psize   = np.where(Btot >= Btot[-1]/2)[0][0]*local_V.dr   #Picks out the index, multiplied by dr
         local_results.append((ft_index, fb_index, zoi, psize))
     
     return local_results
