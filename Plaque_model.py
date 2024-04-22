@@ -31,7 +31,7 @@ def Matrix(l,absorbing = False): #Diffusion matrix
 
 #Plaque models
 
-def MPShell(model,y0,V,t,frames=False,absorbing = False):
+def MPShell(model,y0,V,t,frames=False,absorbing = False,progress = True):
     if not frames:
         frames    = int(t/V.tau0) #Default value for frames
     its           = int(t/V.dt)
@@ -40,13 +40,17 @@ def MPShell(model,y0,V,t,frames=False,absorbing = False):
     ynext         = np.copy(y0)
     DMn,DMP       = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
     gn0           = Gamma(V.gnmax,V.n0,V.Kn)
+    if progress:
+        proglist = tqdm(range(its))
+    else:
+        proglist = range(its)
     if model      == "MP0":
-        for i in tqdm(range(its)):
+        for i in proglist:
             ynext = MP0(ynext,V,gn0,DMP,DMn)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
     elif model    == "MP1":
-        for i in tqdm(range(its)):
+        for i in proglist:
             ynext = MP1(ynext,V,gn0,DMP,DMn)
             if i in frameind:
                 sim[np.where(frameind == i)] = ynext
@@ -104,18 +108,12 @@ def rhalf(sim,LIN,V,var = "Btot"):
     rhalfarr = np.zeros(len(sim))
     if var == "Btot":
         for i,frame in enumerate(sim):
-            Btot = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)
-            halfmax = Btot[-1]/2
-            for j in range(len(Btot)-1):
-                if Btot[j] < halfmax and Btot[j+1] > halfmax:
-                    rhalfarr[i] = j*V.dr/1000
+            Btot        = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)    #Sum all bacteria
+            rhalfarr[i] = np.where(Btot >= Btot[-1]/2)[0][0]*V.dr   #Picks out the index, multiplied by dr
     elif var == "B":
         for i,frame in enumerate(sim):
-            B = frame[0]
-            halfmax = B[-1]/2
-            for j in range(len(B)-1):
-                if B[j] < halfmax and B[j+1] > halfmax:
-                    rhalfarr[i] = j*V.dr/1000
+            B           = frame[0]
+            rhalfarr[i] = np.where(B > B[-1]/2)[0][0]*V.dr                        #Picks out the index, multiplied by dr
     return rhalfarr
 
 def Pfront(sim,V,LIN = False):
