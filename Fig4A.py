@@ -13,7 +13,8 @@ from concurrent.futures import ProcessPoolExecutor
 
 def main():
     maxftau = 10
-    ftarr = np.linspace(1, maxftau, int(maxftau*2-1))
+    length = int(maxftau*2-1)
+    ftarr = np.linspace(1, maxftau, length)
 
     ZOIarr      = np.empty((length, length)) #Zones of infection
     psizearr    = np.empty((length, length)) #Plaque sizes
