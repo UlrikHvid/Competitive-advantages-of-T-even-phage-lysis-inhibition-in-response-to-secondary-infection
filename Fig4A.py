@@ -13,7 +13,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 def main():
     maxftau = 10
-    ftarr = np.linspace(1, maxftau, int(maxftau*2+1))
+    ftarr = np.linspace(1, maxftau, int(maxftau*2-1))
 
     ZOIarr      = np.empty((length, length)) #Zones of infection
     psizearr    = np.empty((length, length)) #Plaque sizes
@@ -38,8 +38,8 @@ def main():
     np.savetxt("MP1plaquesize.csv", psizearr, delimiter=",")
 
 def compute_for_ft(ft_index, ft):
-    maxfbeta = 5
-    fbarr = np.linspace(1, maxfbeta, int(maxfbeta*2+1))
+    maxfbeta = 10
+    fbarr = np.linspace(1, maxfbeta, int(maxfbeta*2-1))
     t = 5*60
     # Set the current ft value in the model environment
     local_V = DVS(Rmax=2*10**3, dr=2)
