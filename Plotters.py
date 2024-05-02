@@ -14,14 +14,20 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0,plotn =
         ylim = (1E3,np.max(yarr)*1.5)
     N,comp = V.N,V.comp
     tarr = tarr/60
+    if model == "M0":
+        L_label = r"I$^R$"
+        P_label = "R"
+    elif model == "M1":
+        L_label = r"I$^P$"
+        P_label = "P"
+        LI = sum(yarr[N+1:2*N+1])
+    
     if plotn:
         plt.plot(tarr,yarr[-1],label = "n",color = "gray")
-    plt.plot(tarr,yarr[-2],label = "P",color = "black")
+    plt.plot(tarr,yarr[-2],label = P_label,color = "black")
     plt.plot(tarr,yarr[0], label = "B",color = "blue")
-    plt.plot(tarr,sum(yarr[1:N+1]),label = r"I$^P$",color = "darkviolet")
-    if model == "M1":
-        LI = sum(yarr[N+1:2*N+1])
-        plt.plot(tarr,LI,label = "L",color = "crimson")
+    plt.plot(tarr,sum(yarr[1:N+1]),label = L_label,color = "darkviolet")
+    plt.plot(tarr,LI,label = "L",color = "crimson") if model == "M1" else None
     if comp:
         Lr = sum(yarr[2*N+1:3*N+1])
         plt.plot(tarr,yarr[-3],label = r"R",ls = "--",color = "black")
@@ -172,7 +178,7 @@ def M3CPlotter_Simple(sol,N,M,scale = "log",lb = 1000,figtitle = 0):
 
 #For outputting animations
 
-def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False,legendloc="upper left",Btot = False):
+def GifGenerator(sim,savetimes,V,model,name,ylim = (1,200),r0 = 0,rf = False,legendloc="upper left",Btot = False):
     frames = len(sim)
     arrlist = [frame for frame in sim]
     if not rf:
@@ -221,7 +227,7 @@ def GifGenerator(sim,V,T,model,name,ylim = (1,200),r0 = 0,rf = False,legendloc="
                 lineList[6].set_ydata(sum(arrlist[j][2*V.N+1:3*V.N+1])[r0:rf])
         if Btot:
             lineList[4+LIN+2*V.comp].set_ydata(sum(arrlist[j][:(1+LIN+V.comp)*V.N+1])[r0:rf])
-        ax.set_title(f"t = {np.round((j)*T/(frames-1))} min")
+        ax.set_title(f"t = {savetimes[j]} min")
         # return the artists set
         return lineList
     # kick off the animation

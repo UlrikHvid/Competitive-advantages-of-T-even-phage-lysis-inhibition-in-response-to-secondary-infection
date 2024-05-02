@@ -31,15 +31,20 @@ def Matrix(l,absorbing = False): #Diffusion matrix
 
 #Plaque models
 
-def MPShell(model,y0,V,t,frames=False,absorbing = False,progress = True):
-    if not frames:
-        frames    = int(t/V.tau0) #Default value for frames
+def MPShell(model,y0,V,t,save_interval=60,absorbing = False,progress = True): #Outer function for the plaque model
+    #By defaulting saving a frame every 60 min
     its           = int(t/V.dt)
-    sim           = np.zeros((frames,len(y0),V.l)) #Holds the saved data
-    frameind      = np.linspace(0,its-1,frames,dtype = int)
+    savetimes  = [0]
+    saveiters = [0]
+    for i in range(its):
+        if i*V.dt > (savetimes[-1]+save_interval):
+            saveiters.append(i)
+            savetimes.append(savetimes[-1]+save_interval)
+    sim           = np.zeros((len(savetimes),len(y0),V.l)) #Holds the saved data
     ynext         = np.copy(y0)
-    DMn,DMP       = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
+    DMn,DMP       = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2 #Matrices for computing spatial differentials
     gn0           = Gamma(V.gnmax,V.n0,V.Kn)
+    frameind = 0
     if progress:
         proglist = tqdm(range(its))
     else:
@@ -47,14 +52,41 @@ def MPShell(model,y0,V,t,frames=False,absorbing = False,progress = True):
     if model      == "MP0":
         for i in proglist:
             ynext = MP0(ynext,V,gn0,DMP,DMn)
-            if i in frameind:
-                sim[np.where(frameind == i)] = ynext
+            if i in saveiters:
+                sim[frameind] = ynext
+                frameind += 1
     elif model    == "MP1":
         for i in proglist:
             ynext = MP1(ynext,V,gn0,DMP,DMn)
-            if i in frameind:
-                sim[np.where(frameind == i)] = ynext
-    return sim
+            if i in saveiters:
+                sim[frameind] = ynext
+                frameind += 1
+    return sim,savetimes
+
+#def MPShell(model,y0,V,t,frames=False,absorbing = False,progress = True):
+#    if not frames:
+#        frames    = int(t/V.tau0) #Default value for frames
+#    its           = int(t/V.dt)
+#    sim           = np.zeros((frames,len(y0),V.l)) #Holds the saved data
+#    frameind      = np.linspace(0,its-1,frames,dtype = int)
+#    ynext         = np.copy(y0)
+#    DMn,DMP       = V.Dn*Matrix(V.l)/V.dr**2, V.DP*Matrix(V.l,absorbing)/V.dr**2
+#    gn0           = Gamma(V.gnmax,V.n0,V.Kn)
+#    if progress:
+#        proglist = tqdm(range(its))
+#    else:
+#        proglist = range(its)
+#    if model      == "MP0":
+#        for i in proglist:
+#            ynext = MP0(ynext,V,gn0,DMP,DMn)
+#            if i in frameind:
+#                sim[np.where(frameind == i)] = ynext
+#    elif model    == "MP1":
+#        for i in proglist:
+#            ynext = MP1(ynext,V,gn0,DMP,DMn)
+#            if i in frameind:
+#                sim[np.where(frameind == i)] = ynext
+#    return sim
 
 def MP0(y,V,gn0,DMP,DMn):
     N,gnmax,Kn,eta,tau0,beta0,rl,rb,Y,da,delta,dt = V.N,V.gnmax,V.Kn,V.eta,V.tau0,V.beta0,V.rl,V.rb,V.Y,V.da,V.delta,V.dt
