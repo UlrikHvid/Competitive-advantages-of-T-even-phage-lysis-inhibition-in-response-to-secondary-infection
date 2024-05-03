@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import os
 from scipy.integrate import solve_ivp
 from scipy.optimize import least_squares,minimize,root,brute,fsolve,approx_fprime
 from scipy.linalg import eig
@@ -15,7 +16,7 @@ from tqdm import tqdm
 V = DV()
 
 side = 20
-ratarr = np.zeros((side,side))
+ratarrM0M1 = np.zeros((side,side))
 ftauarr = np.linspace(1,10,side)
 fbetaarr = np.linspace(1,10,side)
 
@@ -32,7 +33,9 @@ for it,ftau in enumerate(tqdm(ftauarr)):
         V.f_beta = fbeta
         sol0 = solve_ivp(M0,[0,t],y00,args = Const(V,"M0"))
         sol1 = solve_ivp(M1,[0,t],y10,args = Const(V,"M1"))
-        ratarr[ib,it] = sol1.y[-2,-1]/sol0.y[-2,-1]
+        ratarrM0M1[ib,it] = sol1.y[-2,-1]/sol0.y[-2,-1]
+
+np.savetxt(os.getcwd + 'ratarrM0M1.csv', ratarrM0M1, delimiter=',') #This is the data for the heatmap
 
 ################################################################################
 #Fig. 2B
@@ -40,7 +43,7 @@ V = DV()
 V.comp = 1
 
 side = 20
-ratarr = np.zeros((side,side)) #Figure data goes here
+ratarrcomp = np.zeros((side,side)) #Figure data goes here
 ftauarr = np.linspace(1,10,side)
 fbetaarr = np.linspace(1,10,side)
 
@@ -55,16 +58,19 @@ for it,ftau in enumerate(tqdm(ftauarr)):
         V.f_tau = ftau
         V.f_beta = fbeta
         sol = solve_ivp(M1,[0,t],y0,args = Const(V,"M1"))
-        ratarr[ib,it] = sol.y[-2,-1]/sol.y[-3,-1]
+        ratarrcomp[ib,it] = sol.y[-2,-1]/sol.y[-3,-1]
 
+# Export ratarrcomp to csv
+np.savetxt(os.getcwd() + '/ratarrcomp.csv', ratarrcomp, delimiter=',') #This is the data for the heatmap
 ################################################################################
+
 #Fig. S1 B
 V = DV()
 V.comp = 1
 V.rtrig = False
 
 side = 20
-ratarr = np.zeros((side,side)) #Figure data goes here
+ratarrcomp2 = np.zeros((side,side)) #Figure data goes here
 ftauarr = np.linspace(1,10,side)
 fbetaarr = np.linspace(1,10,side)
 
@@ -79,4 +85,7 @@ for it,ftau in enumerate(tqdm(ftauarr)):
         V.f_tau = ftau
         V.f_beta = fbeta
         sol = solve_ivp(M1,[0,t],y0,args = Const(V,"M1"))
-        ratarr[ib,it] = sol.y[-2,-1]/sol.y[-3,-1]
+        ratarrcomp2[ib,it] = sol.y[-2,-1]/sol.y[-3,-1]
+
+# Export ratarrcomp2 to csv
+np.savetxt(os.getcwd() + '/ratarrcomp2.csv', ratarrcomp2, delimiter=',') #This is the data for the heatmap

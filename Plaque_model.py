@@ -141,11 +141,11 @@ def rhalf(sim,LIN,V,var = "Btot"):
     if var == "Btot":
         for i,frame in enumerate(sim):
             Btot        = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)    #Sum all bacteria
-            rhalfarr[i] = np.where(Btot >= Btot[-1]/2)[0][0]*V.dr   #Picks out the index, multiplied by dr
+            rhalfarr[i] = np.where(Btot >= Btot[-1]/2)[0][0]*V.dr/1000   #Picks out the index, multiplied by dr
     elif var == "B":
         for i,frame in enumerate(sim):
             B           = frame[0]
-            rhalfarr[i] = np.where(B > B[-1]/2)[0][0]*V.dr                        #Picks out the index, multiplied by dr
+            rhalfarr[i] = np.where(B > B[-1]/2)[0][0]*V.dr/1000                      #Picks out the index, multiplied by dr
     return rhalfarr
 
 def Pfront(sim,V,LIN = False):
