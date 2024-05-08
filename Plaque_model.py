@@ -177,12 +177,23 @@ def Pdet(sim,V,B0):
                 break
     return Pdet
 
-def rsuper(sim,V):
+def rsuper(sim,LIN,V):
     rsuper = np.zeros(len(sim))
     for i,frame in enumerate(sim):
-        B = frame[0]
+        Btot = np.sum(frame[:(1+LIN+V.comp)*V.N+1],axis = 0)
         P = frame[-2]
         for j in range(len(P)-2):
-            if P[j] > B[j] and P[j+1] < B[j+1]:
+            if P[j] > Btot[j] and P[j+1] < Btot[j+1]:
                 rsuper[i] = j*V.dr/1000
     return rsuper
+
+#def rsuper(sim,V): 
+#    rsuper = np.zeros(len(sim))
+#    for i,frame in enumerate(sim):
+#        B = frame[0]
+#        P = frame[-2]
+#        for j in range(len(P)-2):
+#            if P[j] > B[j] and P[j+1] < B[j+1]:
+#                rsuper[i] = j*V.dr/1000
+#    return rsuper
+

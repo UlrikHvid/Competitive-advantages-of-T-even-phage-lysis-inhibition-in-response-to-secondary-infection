@@ -4,8 +4,8 @@ import matplotlib.animation as animation
 import numpy as np
 
 ############################################################################
-
 #Plotter functions
+############################################################################
 
 def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0,plotn = True,figsize = False): #Not plotting infected substates
     if figsize:
@@ -174,9 +174,70 @@ def M3CPlotter_Simple(sol,N,M,scale = "log",lb = 1000,figtitle = 0):
         plt.savefig(figtitle)
     return
 
-################################################################################################################
+def PlaquePlotter(sim,savetimes,V,T,model,ylim = (1e-3,20),r0 = 0,rf = False,legendloc="upper right",Btot = False,figtitle = 0):
+    frames = len(sim)
+    arrlist = [frame for frame in sim]
+    if not rf:
+        rf = V.l #Plot whole system unless specified
+        
+    # Define the number of rows and columns for the subplots
+    rows = 4
+    cols = 1
+    fig, ax = plt.subplots(rows, cols,figsize=(5,9))# Create subplots
+    fig.subplots_adjust(hspace=0)
+    axs = ax.ravel()  # Flatten the array of subplots
+     
+    if model == "MS1" or model == "MP1":
+        LIN = True
+    else:
+        LIN = False
+    rarr = np.linspace(r0,rf,rf-r0)*V.dr/1000 #mm
+    
+    for i in range (1,frames):
+        ax = axs[i-1]
+        lineB,  = ax.plot(rarr,arrlist[i][0 ,r0:rf],label = r"$B$",color = "blue")
+        lineP,  = ax.plot(rarr,arrlist[i][-2,r0:rf],label = r"$P$",color = "black")
+        linen,  = ax.plot(rarr,arrlist[i][-1,r0:rf],label = r"$n$",color = "gray")
+        if LIN:
+            lineLI, = ax.plot(rarr,sum(arrlist[i][V.N+1:2*V.N+1])[r0:rf],label = r"$L$",color = "crimson")
+            lineL,  = ax.plot(rarr,sum(arrlist[i][ 1:V.N+1])[r0:rf],label = r"$I^P$",color = "darkviolet")
+        else:
+            lineL,  = ax.plot(rarr,sum(arrlist[i][ 1:V.N+1])[r0:rf],label = r"$I^R$",color = "darkviolet")
+        if V.comp:
+            linePr, = ax.plot(rarr,arrlist[i][-3,r0:rf],label = r"$R$",ls = "--", color = "black")
+            lineLr, = ax.plot(rarr,sum(arrlist[i][2*V.N+1:3*V.N+1])[r0:rf],label = r"$I^R$",ls = "--",color = "darkviolet")
+        if Btot:
+            lineBt,  = ax.plot(rarr,sum(arrlist[i][:(1+LIN+V.comp)*V.N+1])[r0:rf],label = r"$B_{tot}$",ls = (0,(1,3)),color = "g")
+            
+        _ = ax.set_ylim(ylim[0],ylim[1])
+        _ = ax.set_xlim(0,2)
+        ax.tick_params(axis = "both",labelsize = 9)
+        if i != frames - 1:
+            _ = ax.set_xticks(np.linspace(0,2,9),[None]*9)  
+            ax.tick_params(axis='x', direction='in')
+        else:
+            _ = ax.set_xticks(np.linspace(0,2,9),np.linspace(0,2,9))
+            ax.tick_params(axis='x', direction='out')
+        
+        _ = ax.set_yscale("log")
+        if i == frames - 1:
+            _ = ax.set_xlabel("r [mm]")
+        _ = ax.set_ylabel(r"Concentration [$\mu$m$^{-2}$]",fontsize = 10)
+        _ = ax.set_title(f"t = {savetimes[i]} min",y=1.0, pad=-12,loc = "left",position = (0.02,1),fontsize=10)
+       
+    _ = axs[0].legend(loc = legendloc)
+        
+    plt.tight_layout()  # Adjust the layout
+    if figtitle:
+        plt.savefig(figtitle + ".svg")
+    else: 
+        plt.show()
+    return
 
+
+################################################################################################################
 #For outputting animations
+################################################################################################################
 
 def GifGenerator(sim,savetimes,V,model,name,ylim = (1,200),r0 = 0,rf = False,legendloc="upper left",Btot = False):
     frames = len(sim)
@@ -234,3 +295,4 @@ def GifGenerator(sim,savetimes,V,model,name,ylim = (1,200),r0 = 0,rf = False,leg
     ani = animation.FuncAnimation(fig, updatefig, frames=range(frames),interval = 50)
     writergif = animation.PillowWriter(fps=2) 
     _ = ani.save(name + ".gif", writer = writergif)
+
