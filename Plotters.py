@@ -34,8 +34,8 @@ def BrothPlotter(model,V,tarr,yarr,scale = "log",ylim=False,figtitle = 0,plotn =
         plt.plot(tarr,Lr,label = r"I$^R$",ls = "--",color = "darkviolet")
     plt.yscale(scale)
     plt.ylim(ylim)
-    plt.ylabel(r"Concentration [ml$^{-1}$]")
-    plt.xlabel("Time [h]")
+    plt.ylabel(r"Concentration [ml$^{-1}$]",fontsize = 12)
+    plt.xlabel("Time [h]", fontsize = 12)
     plt.grid(axis="y", which = "major")
     plt.legend()
     if figtitle:
@@ -229,7 +229,7 @@ def PlaquePlotter(sim,savetimes,V,T,model,ylim = (1e-3,20),r0 = 0,rf = False,leg
         
     plt.tight_layout()  # Adjust the layout
     if figtitle:
-        plt.savefig(figtitle + ".svg")
+        plt.savefig(figtitle + ".jpg")
     else: 
         plt.show()
     return
