@@ -2,11 +2,11 @@
   <img src=T4-logo.png width="200">
 </p>
 
-## :rocket: Welcome
+## Introduction
 
 This repository contains code and results for the simulations described in the paper *Competitive advantages of T-even phage lysis inhibition in response to secondary infection*.
 
-## :test_tube:  Model explanation
+## Model explanation
 
 The code contains three separate types of simulations:
 
@@ -30,11 +30,11 @@ n: Nutrients
 
 The broth model is integrated with scipy's solve_ivp (4th order Runge Kutta), while the spatial models are integrated manually (forward Euler) with a fixed time step. The spatial simulations assume radial symmetry and just display a radial cross-section of the system.
 
-## :gear:  Requirements
+## Requirements
 
 Numpy, scipy, matplotlib, tqdm
 
-## :ringed_planet:  Showcase notebook
+## Showcase notebook
 
 The jpgs and gifs in the repository show example simulations. Most figures in the paper are output by the notebook Figs_2-4+S1.ipynb. Only Figure 5, which is a parameterscan performed in parallel, is done in a separate file, Fig5.py. That file outputs csv files that can be plotted in the notebook Fig5_plotter.ipynb. \
 
