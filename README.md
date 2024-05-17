@@ -1,7 +1,3 @@
-<p align="center">
-  <img src=T4-logo.png width="200">
-</p>
-
 ## Introduction
 
 This repository contains code and results for the simulations described in the paper *Competitive advantages of T-even phage lysis inhibition in response to secondary infection*.
