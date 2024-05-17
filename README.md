@@ -42,6 +42,4 @@ The default parameter values are imported as objects, and parameters can be alte
 
 Note, the function GifGenerator saves a gif, but it does not play inside the notebook.
 
-One technical comment: The default spatial resolution is dr = 20. However, the spatial model MS, which is the most complex, requires a significantly finer resolution. I have left the default value in the notebook, because it reproduces roughly the right behavior, and because a more precise simulation requires an impractical computation time.
-
-Enjoy!
+For figs. 2C, 3B and S1B, I also include a binary version disinguishing between values above or below 1, which was used to manually draw the contour line.
